@@ -1,0 +1,10 @@
+vender/
+*.cache
+*.bak
+*.bat
+*.log
+*.id
+*.ip
+test.php
+src/CloudflareApiConfig.php
+src/ValuedomainApiConfig.php
