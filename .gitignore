@@ -1,4 +1,4 @@
-vender/
+/vendor/
 *.cache
 *.bak
 *.bat
