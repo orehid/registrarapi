@@ -10,7 +10,7 @@ This project support APIs for DDNS or DNSSEC setteing only.
 * Developed on Windows. It hasn't been tested on any other OS.
 
 ## Install
-* composer orehid/registrarapi
+* composer require orehid/registrarapi
 
 ___
 

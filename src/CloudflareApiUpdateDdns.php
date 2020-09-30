@@ -94,17 +94,18 @@
 					continue;
 				}
 
-				$api::log("update content for '{$result->name}'");
-				$api::log("content : {$result->content} -> {$ipaddress_current}");
-				$result->content = $ipaddress_current;
+				$api::log("update : '{$result->name}' : {$result->content} -> {$ipaddress_current}");
 				if(!$dryrun) {
+					$result->content = $ipaddress_current;
 					$api::isError($api::updateDnsRecords ( $result ));
+				} else {
+					$api::log("skip : cause DRYRUN setting");
 				}
 			}
 
 		}
 
-	} catch (Exception $e) {
+	} catch (\Exception $e) {
 	    echo PHP_EOL."*** ".$e->getMessage()." ***".PHP_EOL;
 	}
 
