@@ -69,18 +69,26 @@ class RegistrarApi
     {
         $time  = (defined('REQUEST_TIME') ? REQUEST_TIME : time());
         $files = self::getEnv('LOG_FILES');
-        if ($files && $val) {
-            $buf = [];
-            $prefix = date("Y-m-d H:i:s", $time)." ";
-            if (!is_string($val)) {
-                $val = self::vardump($val);
-            }
-            foreach ( mb_split('\\r?\\n', $val) as $line) {
-                $buf[] = $prefix.$line;
-            }
-            if ($buf) {
+        if ($files) {
+            if ($val) {
+                $buf = [];
+                $prefix = date("Y-m-d H:i:s", $time)." ";
+                if (!is_string($val)) {
+                    $val = self::vardump($val);
+                }
+                foreach ( mb_split('\\r?\\n', $val) as $line) {
+                    $buf[] = $prefix.$line;
+                }
+                if ($buf) {
+                    foreach ($files as $file) {
+                        file_put_contents($file, implode(static::EOL, $buf).static::EOL, FILE_APPEND);
+                    }
+                }
+            } else {
                 foreach ($files as $file) {
-                    file_put_contents($file, implode(static::EOL, $buf).static::EOL, FILE_APPEND);
+                    if (is_file($file)) {
+                        touch($file);
+                    }
                 }
             }
         }
