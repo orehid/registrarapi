@@ -26,6 +26,7 @@ class RegistrarApi
      */
 
     protected const LOG_FILES = [];
+    protected const LOG_STYLE = 2;		// 1:verbose 2:simple
     protected const EOL = "\n";
 
 
@@ -51,6 +52,7 @@ class RegistrarApi
 
     /**
      * getEnv
+     *
      * @return mixed
      */
     public static function getEnv( string $label )
@@ -65,7 +67,7 @@ class RegistrarApi
     /**
      * log
      */
-    public static function log($val) : void
+    public static function log($val, string $label="", int $style=0) : void
     {
         $time  = (defined('REQUEST_TIME') ? REQUEST_TIME : time());
         $files = self::getEnv('LOG_FILES');
@@ -74,7 +76,7 @@ class RegistrarApi
                 $buf = [];
                 $prefix = date("Y-m-d H:i:s", $time)." ";
                 if (!is_string($val)) {
-                    $val = self::vardump($val);
+                    $val = self::vardump($val, $label, $style);
                 }
                 foreach ( mb_split('\\r?\\n', $val) as $line) {
                     $buf[] = $prefix.$line;
@@ -99,23 +101,42 @@ class RegistrarApi
      *
      * @return string
      */
-    public static function vardump( $arg, string $label="") : string
+    public static function vardump($arg, string $label="", int $style=0) : string
     {
-        $dump = function ($arg, $label="", int $indent=0) use ( &$dump ) {
+		if ($style===0) {
+			$style = self::getEnv('LOG_STYLE');
+		}
+        $dump = function ($arg, $label="", int $indent=0, int $style=1) use ( &$dump ) {
             $type = gettype($arg);
             $buf = str_repeat("  ", $indent). (($label!=="")?(is_string($label)?"'{$label}'":$label)." => ":"");
             switch( $type ) {
             case 'boolean' :
-                $buf .= "b(".($arg?'TRUE':'FALSE').")".static::EOL;
+                if ($style===1) {
+                    $buf .= "b(".($arg?'TRUE':'FALSE').")".static::EOL;
+                } else {
+                    $buf .= ($arg?'TRUE':'FALSE').static::EOL;
+                }
                 break;
             case 'integer' :
-                $buf .= "i(".$arg.")".static::EOL;
+                if ($style===1) {
+                    $buf .= "i(".$arg.")".static::EOL;
+                } else {
+                    $buf .= $arg.static::EOL;
+                }
                 break;
             case 'double' :
-                $buf .= "f(".$arg.")".static::EOL;
+                if ($style===1) {
+                    $buf .= "f(".$arg.")".static::EOL;
+                } else {
+                    $buf .= $arg.static::EOL;
+                }
                 break;
             case 'string' :
-                $buf .= "s(".strlen($arg).") '".$arg."'".static::EOL;
+                if ($style===1) {
+                    $buf .= "s(".strlen($arg).") '".$arg."'".static::EOL;
+                } else {
+                    $buf .= '"'.$arg.'"'.static::EOL;
+                }
                 break;
             case 'resource' :
                 $buf .= "r(".get_resource_type($arg).")".static::EOL;
@@ -130,55 +151,54 @@ class RegistrarApi
                     $buf .= "'".$arg."'".static::EOL;
                     break;
                 }
-
                 if (isset($arg->typename)) {
                     $buf .= "object(".$arg->typename.")".static::EOL;
                     break;
                 }
-
                 $t_buf = "";
                 foreach ($arg as $l=>$v) {
-                    $t_buf .= $dump($v, $l, $indent+1);
+                    $t_buf .= $dump($v, $l, $indent+1, $style);
                 }
                 if (strlen($t_buf)) {
-                    $buf .= "o(".get_class($arg).") [".static::EOL;
+                    if ($style===1) {
+                        $buf .= "o(".get_class($arg).") [".static::EOL;
+                    } else {
+                        $buf .= "[".static::EOL;
+                    }
                     $buf .= $t_buf;
                     $buf .= str_repeat("  ", $indent)."]".static::EOL;
                 } else {
-                    $buf .= "o(".get_class($arg).") []".static::EOL;
+                    if ($style===1) {
+                        $buf .= "o(".get_class($arg).") []".static::EOL;
+                    } else {
+                        $buf .= "[]".static::EOL;
+                    }
                 }
                 break;
-             // $buf .= "o(".get_class($arg).") [...]".static::EOL;
-             // break;
             case 'array' :
                 $c = count($arg);
                 if ($c===0) {
-                    $buf .= "a({$c}) []".static::EOL;
+                    if ($style===1) {
+                        $buf .= "a({$c}) []".static::EOL;
+                    } else {
+                        $buf .= "[]".static::EOL;
+                    }
                     break;
                 }
-
-                //    if ($c===1) {
-                //        reset($arg);
-                //        $l = key($arg);
-                //        $v = current($arg);
-                //        $t = gettype($v);
-                //        if ($t!=='array' && $t!=='object') {
-                //            $buf .= "a({$c}) [".mb_ereg_replace("[\r\n]+","",$dump($v, $l, 0))."]".static::EOL;
-                //            break;
-                //        }
-                //    }
-
-                // ($c>1)
-                $buf .= "a({$c}) [".static::EOL;
+                if ($style===1) {
+                    $buf .= "a({$c}) [".static::EOL;
+                } else {
+                    $buf .= "[".static::EOL;
+                }
                 foreach ($arg as $l=>$v) {
-                    $buf .= $dump($v, $l, $indent+1);
+                    $buf .= $dump($v, $l, $indent+1, $style);
                 }
                 $buf .= str_repeat("  ", $indent)."]".static::EOL;
                 break;
             }
             return $buf;
         };
-        return $dump($arg, $label, 0);
+        return $dump($arg, $label, 0, $style);
     }
 }
 

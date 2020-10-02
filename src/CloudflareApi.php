@@ -27,10 +27,10 @@ class CloudflareApi extends RegistrarApi
      *  settings
      */
 
-    protected const API_TOKEN = 'YOUR_API_TOKEN';  // or global const CLOUDFLARE_API_TOKEN
+    protected const API_TOKEN = 'YOUR_API_TOKEN';   // or global const CLOUDFLARE_API_TOKEN
     protected const LOG_FILES = [                   // empty: no logging
         __DIR__.'/cloudflare.log',
-        'php://stdout',                  // 'php://stdout' for screen
+        'php://stdout',                             // 'php://stdout' for screen
     ];
 	protected const TARGET_RECORD_TYPE = ['type'=>'A'];
 

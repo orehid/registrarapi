@@ -25,7 +25,7 @@ define('CLOUDFLARE_LOG_FILES',[
     __DIR__.'/api.log',
     'php://stdout',
 ]);
-
+define('CLOUDFLARE_LOG_STYLE', 2);  // 1:verbose 2:simple
 
 // The following vars override vars in CloudflareApiUpdateDdns.php.
 

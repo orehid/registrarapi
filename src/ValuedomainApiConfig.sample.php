@@ -13,3 +13,9 @@ $ds_records = [
 // $domain_id   = '999999'; // If you know the value, write it down
 $domain = 'example.com';
 
+// logging
+//define('VALUEDOMAIN_LOG_FILES',[
+//    __DIR__.'/valuedomain.log',
+//    'php://stdout',
+//]);
+//define('CLOUDFLARE_LOG_STYLE', 2);  // 1:verbose 2:simple
