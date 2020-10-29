@@ -11,7 +11,7 @@
  * @author   orehid <orehid@example.com>
  * @license  MIT
  * @version  1.0
- * @link     https://www.value-domain.com/api/doc/
+ * @link     https://www.value-domain.com/api/doc/domain/
  */
 
 
@@ -26,17 +26,17 @@ class ValuedomainApi extends RegistrarApi
     /**
      *  constants
      */
-    public const NAME         = 'VALUEDOMAIN';
+    public const NAME           = 'VALUEDOMAIN';
     protected const ENDPOINT    = "https://api.value-domain.com/v1";
-    protected const EOL    = "\n";
+    protected const EOL         = "\n";
 
     /**
      *  settings
      */
     protected const APIKEY       = 'YOUR_API_KEY';
-    protected const LOG_FILES    = [           // empty: no logging
+    protected const LOG_FILES    = [  // empty: no logging
         __DIR__.'/valuedomain.log',
-        'php://stdout',              // 'php://stdout' for screen
+        'php://stdout',               // 'php://stdout' for screen
     ];
 
 

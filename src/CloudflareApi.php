@@ -84,7 +84,7 @@ class CloudflareApi extends RegistrarApi
             'content'=> $record->content,           // (ip address)
             'ttl'=> $record->ttl,                   // 1:auto
         ];
-        $result = self::request("/zones/{$record->zone_id}/dns_records/{$record->id}", 'GET', $params);
+        $result = self::request("/zones/{$record->zone_id}/dns_records/{$record->id}", 'PUT', $params);
         return $result;
     }
 
